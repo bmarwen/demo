@@ -15,9 +15,8 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                node('master') { // Specify the node or label if needed
                     sh 'composer install'
-                }
+                
             }
         }
 
