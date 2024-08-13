@@ -7,46 +7,25 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                    sh 'composer install'
-                
-            }
-        }
-
         stage('Build') {
-            steps {
-                    sh 'composer build'
+    steps {
+        parallel(
+            composer: {
+                sh 'composer install --prefer-dist --optimize-autoloader'
+                sh 'composer require --dev phpmetrics/phpmetrics friendsofphp/php-cs-fixer --no-interaction --prefer-dist --optimize-autoloader'
+            },
+            'prepare-dir': {
+                sh 'rm -Rf ./build/'
+                sh 'mkdir -p ./build/coverage'
+                sh 'mkdir -p ./build/logs'
+                sh 'mkdir -p ./build/phpmetrics'
             }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                    script {
-                        def scannerHome = tool name: 'SonarQube Scanner', type: 'SonarQubeScannerInstallation'
-                        withSonarQubeEnv(SONARQUBE) {
-                            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=my-symfony-project -Dsonar.sources=src -Dsonar.host.url=http://localhost:9000 -Dsonar.login=YOUR_SONARQUBE_TOKEN"
-                        }
-                    }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                    sh 'php bin/phpunit'
-            }
-        }
+        )
+    }
+}
     }
 
     post {
-        always {
-                cleanWs()
-        }
+       
     }
 }
