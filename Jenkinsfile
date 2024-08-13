@@ -23,30 +23,24 @@ pipeline {
 
         stage('Build') {
             steps {
-                node('master') { // Specify the node or label if needed
                     sh 'composer build'
-                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                node('master') { // Specify the node or label if needed
                     script {
                         def scannerHome = tool name: 'SonarQube Scanner', type: 'SonarQubeScannerInstallation'
                         withSonarQubeEnv(SONARQUBE) {
                             sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=my-symfony-project -Dsonar.sources=src -Dsonar.host.url=http://localhost:9000 -Dsonar.login=YOUR_SONARQUBE_TOKEN"
                         }
                     }
-                }
             }
         }
 
         stage('Test') {
             steps {
-                node('master') { // Specify the node or label if needed
                     sh 'php bin/phpunit'
-                }
             }
         }
     }
