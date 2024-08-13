@@ -15,22 +15,28 @@ pipeline {
         
         stage('Install Dependencies') {
             steps {
-                sh 'composer install'
+                node {
+                    sh 'composer install'
+                }
             }
         }
         
         stage('Build') {
             steps {
-                sh 'composer build' // Adjust this command based on your build process
+                node {
+                    sh 'composer build' // Adjust this command based on your build process
+                }
             }
         }
         
         stage('SonarQube Analysis') {
             steps {
-                script {
-                    def scannerHome = tool name: 'SonarQube Scanner', type: 'SonarQubeScannerInstallation'
-                    withSonarQubeEnv(SONARQUBE) {
-                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=my-symfony-project -Dsonar.sources=src -Dsonar.host.url=http://localhost:9000 -Dsonar.login=YOUR_SONARQUBE_TOKEN"
+                node {
+                    script {
+                        def scannerHome = tool name: 'SonarQube Scanner', type: 'SonarQubeScannerInstallation'
+                        withSonarQubeEnv(SONARQUBE) {
+                            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=my-symfony-project -Dsonar.sources=src -Dsonar.host.url=http://localhost:9000 -Dsonar.login=YOUR_SONARQUBE_TOKEN"
+                        }
                     }
                 }
             }
@@ -38,7 +44,9 @@ pipeline {
         
         stage('Test') {
             steps {
-                sh 'php bin/phpunit'
+                node {
+                    sh 'php bin/phpunit'
+                }
             }
         }
     }
