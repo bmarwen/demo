@@ -46,9 +46,7 @@ pipeline {
 
     post {
         always {
-            node('master') { // Specify the node or label if needed
                 cleanWs()
-            }
         }
     }
 }
