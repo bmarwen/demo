@@ -1,10 +1,6 @@
 pipeline {
     agent any // This uses any available agent or node
 
-    environment {
-        SONARQUBE = 'MySonarQube' // Name of the SonarQube server configuration in Jenkins
-        SONARQUBE_SCANNER = tool name: 'SonarQube Scanner', type: 'SonarQubeScannerInstallation'
-    }
 
     stages {
         stage('Build') {
