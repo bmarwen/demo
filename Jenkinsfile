@@ -1,8 +1,8 @@
 pipeline {
-    agent any
+    agent any // This uses any available agent or node
 
     environment {
-        SONARQUBE = 'MySonarQube'
+        SONARQUBE = 'MySonarQube' // Name of the SonarQube server configuration in Jenkins
         SONARQUBE_SCANNER = tool name: 'SonarQube Scanner', type: 'SonarQubeScannerInstallation'
     }
 
@@ -15,7 +15,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                node {
+                node('master') { // Specify the node or label if needed
                     sh 'composer install'
                 }
             }
@@ -23,7 +23,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                node {
+                node('master') { // Specify the node or label if needed
                     sh 'composer build'
                 }
             }
@@ -31,7 +31,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                node {
+                node('master') { // Specify the node or label if needed
                     script {
                         def scannerHome = tool name: 'SonarQube Scanner', type: 'SonarQubeScannerInstallation'
                         withSonarQubeEnv(SONARQUBE) {
@@ -44,7 +44,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                node {
+                node('master') { // Specify the node or label if needed
                     sh 'php bin/phpunit'
                 }
             }
@@ -53,7 +53,7 @@ pipeline {
 
     post {
         always {
-            node {
+            node('master') { // Specify the node or label if needed
                 cleanWs()
             }
         }
