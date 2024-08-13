@@ -1,18 +1,18 @@
 pipeline {
     agent any
-    
+
     environment {
-        SONARQUBE = 'MySonarQube' // Name of the SonarQube server configuration in Jenkins
+        SONARQUBE = 'MySonarQube'
         SONARQUBE_SCANNER = tool name: 'SonarQube Scanner', type: 'SonarQubeScannerInstallation'
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-        
+
         stage('Install Dependencies') {
             steps {
                 node {
@@ -20,15 +20,15 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Build') {
             steps {
                 node {
-                    sh 'composer build' // Adjust this command based on your build process
+                    sh 'composer build'
                 }
             }
         }
-        
+
         stage('SonarQube Analysis') {
             steps {
                 node {
@@ -41,7 +41,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Test') {
             steps {
                 node {
@@ -50,10 +50,12 @@ pipeline {
             }
         }
     }
-    
+
     post {
         always {
-            cleanWs()
+            node {
+                cleanWs()
+            }
         }
     }
 }
